@@ -1,40 +1,50 @@
-//Problem 84.Largest Rectangle in Histogram
+//For every bar 'x', we calculate the area with 'x' as the smallest bar in the rectangle.
+//If we calculate such area for every bar 'x' and find the maximum of all areas, our task is done. 
+//How to calculate area with 'x' as smallest bar? We need to know index of the first smaller (smaller than 'x') bar on left of 'x' and index of first smaller bar on right of 'x'.
+//This ans is simply the maximum of height*(next_smaller_index - previous_smaller_index - 1).
 
-//CODE
 class Solution {
 public:
-    int largestRectangleArea(vector<int>& heights) {
-       int n = heights.size();
-        int max_area = 0;
-		//We maintain a stack which stores the index of the shortest rectangle encountered so far and those of consequent
-		//rectangles taller than it. As we encounter shorter rectangles than the tallest rectangle in the stack,  we pop elements
-		//to maintain a  stack with indices of rectangles with non-decreasing heights. The key idea is that a rectangle with 
-		//height equal to that of the 'minimum encountered so far' can extend into subsequent rectangles. As we pop an 
-		//indices from the stack, we need to record the maximum area that a rectangle with the poped rectangle's height could
-		//occupy which is simply the index until (not including) i in the for loop till (not including) the previously unpoped 
-		//element present in the stack.
+    int largestRectangleArea(vector<int>& h) {
         stack<int> s;
-        for (int i=0; i<heights.size(); ++i) {
-            while (!s.empty() && heights[s.top()] > heights[i]) {
-                int cur_max = s.top();
+        int max_a = 0;
+        int n = h.size();
+        vector<int> ns(n,n);
+        vector<int> ps(n,-1);
+        
+        for(int i=n-1;i>=0;i--)
+        {
+            while(!s.empty() and h[s.top()] >= h[i])
+            {
                 s.pop();
-                //Add upto previous index -> (i-1) - (the index of the last value we didn't kick out + 1) + 1.
-				//If s is empty we are simply considering a recrtangle starting from i=0.
-                int area = heights[cur_max] * ((i-1) - ((s.empty()?-1:s.top())+1) + 1);
-                max_area = max(area,max_area);
+            }
+            if(!s.empty())
+            {
+                ns[i] = s.top();
             }
             s.push(i);
+            
         }
-        //If the last few values are increasing, we need to remove these values.
-        while (!s.empty()) {
-            int cur_max = s.top();
-            s.pop();
-            //Add upto previous index -> (n-1) - (the index of the value we kicked out) + 1.
-            int area = heights[cur_max] * ((n-1) - ((s.empty()?-1:s.top())+1) + 1);
-            max_area = max(area,max_area);
+        s= stack<int> ();
+        for(int i=0;i<n;i++)
+        {
+            while(!s.empty() and h[s.top()] >= h[i])
+            {
+                s.pop();
+            }
+            if(!s.empty())
+            {
+                ps[i] = s.top();
+            }
+            s.push(i);
+            
         }
         
-        return max_area;
-        
+        for(int i=0;i<n;i++)
+        {
+            max_a = max(max_a,h[i]*(ns[i]-ps[i]-1));
+        }
+        return max_a;
+
     }
 };
