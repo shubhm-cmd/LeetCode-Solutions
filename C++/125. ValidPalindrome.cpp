@@ -1,30 +1,30 @@
-// First of all, made a string p using string s with all tha characters which can be a part of the palindrome, which means, considering only alphanumeric characters and ignoring cases.
-// Then using while loop, traversed string p from both sides (from the beginning as well as the end) to check if it forms a palindrome.
+//Easy solution 4ms
+
+// Created string str using string s with all tha characters which can be a part of the palindrome, which means, considering only alphanumeric characters and ignoring cases.
+// Then using while loop, reversing the string str and then comparing both the original and new strings to check if it forms a palindrome or not.
 
 bool isPalindrome(string s) {
-    string p;        
-    for(int i=0;i<s.size();i++)
-    {
-        if(isupper(s[i]))
-        {
-            s[i]+=32;
-            p+=s[i];
-        }
-        
-        else if(islower(s[i]))
-            p+=s[i];
-            
-        else if(isdigit(s[i]))
-            p+=s[i];
+    string str;
+
+    for(char c : s){
+        if(isalnum(c)) {
+            if((c >= 65 and c <= 90))
+                c=c+32; // if char is Upper, convert to lower
+            str+=c;
+        }        
     }
-    
-    int i=0,j=p.size()-1;
-    while(i<=j)
-    {
-        if(p[i]!=p[j])
-            return false;
-        i++;
-        j--;
+
+    string rev = str;
+    int n = rev.length()-1;
+    int i = 0;
+
+    //Reverse the string str
+    while(i < n) {
+        swap(rev[i],rev[n]);
+        i++,n--;
     }
-    return true;
+
+    if(str==rev)
+        return true;
+    return false;
 }
